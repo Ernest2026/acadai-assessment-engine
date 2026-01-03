@@ -9,6 +9,7 @@ from .serializers import LoginSerializer, SignUpSerializer
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []
     
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -26,6 +27,7 @@ class LoginView(APIView):
 
 class SignupView(APIView): 
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def post(self, request):
         serializer = SignUpSerializer(data=request.data)
