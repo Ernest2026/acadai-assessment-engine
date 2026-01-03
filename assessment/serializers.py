@@ -21,11 +21,12 @@ class ExamSerializer(serializers.ModelSerializer):
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
-        fields = ['question', 'answer_text']
+        fields = ['question', 'answer_text', 'score']
+        read_only_fields = ['score']
 
 class SubmissionSerializer(serializers.ModelSerializer):
-    answers = AnswerSerializer(many=True, write_only=True)
-    
+    answers = AnswerSerializer(many=True)
+
     class Meta:
         model = Submission
         fields = ['id', 'exam', 'submitted_at', 'grading_status', 'total_score', 'answers']
@@ -33,13 +34,18 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         answers_data = validated_data.pop('answers')
+        
+        # Assign the student from the request context for security
         submission = Submission.objects.create(
             student=self.context['request'].user, 
             **validated_data
         )
-        
+
+        # Bulk create Answer objects for database efficiency
         answer_instances = [
-            Answer(submission=submission, **data) for data in answers_data
+            Answer(submission=submission, **ans_data) 
+            for ans_data in answers_data
         ]
         Answer.objects.bulk_create(answer_instances)
+
         return submission

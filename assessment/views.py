@@ -50,8 +50,6 @@ class SubmissionView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        # Requirement 2: Ensure students only view their own submissions
-        # Requirement 43: Optimize retrieval using select_related
         submissions = Submission.objects.filter(
             student=request.user
         ).select_related('exam')
@@ -70,6 +68,7 @@ class SubmissionView(APIView):
             
             # Requirement 3: Automated Grading Feedback
             try:
+                print(submission)
                 process_submission_grading(submission)
                 # Re-serialize to include the calculated grade in the response
                 return Response(

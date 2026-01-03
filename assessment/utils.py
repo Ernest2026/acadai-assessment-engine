@@ -2,26 +2,35 @@ import re
 
 def process_submission_grading(submission):
     total_score = 0
-    answers = submission.answers.all()
+    # Use the related_name 'answers' to get all student responses
+    answers = submission.answers.all() 
+
+    if not answers.exists():
+        submission.grading_status = 'failed'
+        submission.save()
+        return
 
     for ans in answers:
         question = ans.question
         
-        # Simple Keyword Matching/Density Logic
+        # Ensure there is an expected answer to compare against 
         if question.expected_answer and ans.answer_text:
-            # Normalize and extract keywords
-            expected_keywords = set(re.findall(r'\w+', question.expected_answer.lower()))
-            student_words = set(re.findall(r'\w+', ans.answer_text.lower()))
+            # Basic Keyword Matching
+            expected = set(re.findall(r'\w+', question.expected_answer.lower()))
+            provided = set(re.findall(r'\w+', ans.answer_text.lower()))
             
-            if expected_keywords:
-                matches = expected_keywords.intersection(student_words)
-                match_ratio = len(matches) / len(expected_keywords)
-                ans.score = float(question.max_score) * match_ratio
+            if expected:
+                matches = expected.intersection(provided)
+                # Calculate ratio: (matches / total keywords) * max_score
+                score_ratio = len(matches) / len(expected)
+                ans.score = float(question.max_score) * score_ratio
+                print("graded ans score is ", ans.score)
             else:
-                ans.score = 0.0
+                ans.score = 0
         else:
-            ans.score = 0.0
+            ans.score = 0
         
+        print("notgraded ans score is ", ans.score)
         ans.save()
         total_score += ans.score
 
