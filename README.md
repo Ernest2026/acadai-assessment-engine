@@ -5,7 +5,7 @@ A modular and secure assessment engine built with **Django** and **Django REST F
 ## 🚀 Features
 
 - **Custom User Model**: Extended `AbstractUser` for flexible student/admin authentication.
-- **Relational Schema**: Clean database design linking Courses -> Exams -> Questions -> Submissions -> Answers.
+- **Relational Schema**: Clean database design linking *Courses -> Exams -> Questions -> Submissions -> Answers*.
 - **Secure Submissions**: Endpoints protected by Token Authentication, ensuring students only access their own data.
 - **Automated Grading Service**: A custom logic layer in `utils.py` that evaluates student answers against expected answers using keyword density.
 - **Optimized Performance**: Implements `select_related` and `prefetch_related` to minimize database hits.
