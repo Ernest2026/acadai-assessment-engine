@@ -9,7 +9,10 @@ class CourseSerializer(serializers.ModelSerializer):
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
-        fields = ['id', 'exam', 'order_index', 'question_type', 'prompt', 'max_score']
+        fields = ['id', 'exam', 'order_index', 'expected_answer', 'question_type', 'prompt', 'max_score']
+        extra_kwargs = {
+            'expected_answer': {'write_only': True}
+        }
 
 class ExamSerializer(serializers.ModelSerializer):
     questions = QuestionSerializer(many=True, read_only=True)

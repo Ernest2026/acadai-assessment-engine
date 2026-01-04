@@ -57,7 +57,6 @@ class SubmissionView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        # Requirement 2: Apply appropriate validation via serializer context
         serializer = SubmissionSerializer(
             data=request.data, 
             context={'request': request}
@@ -66,11 +65,10 @@ class SubmissionView(APIView):
         if serializer.is_valid():
             submission = serializer.save()
             
-            # Requirement 3: Automated Grading Feedback
             try:
-                print(submission)
+                # print(submission)
                 process_submission_grading(submission)
-                # Re-serialize to include the calculated grade in the response
+                
                 return Response(
                     SubmissionSerializer(submission).data, 
                     status=status.HTTP_201_CREATED
